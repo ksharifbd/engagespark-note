@@ -1,6 +1,11 @@
 import dayjs from 'dayjs'
 
-import { getNoteTitle, getWebsiteTitle, getActiveNoteFromShortUuid } from '@/utils/helpers'
+import {
+  getNoteTitle,
+  getWebsiteTitle,
+  getActiveNoteFromShortUuid,
+  removeItalics,
+} from '@/utils/helpers'
 import { Folder } from '@/utils/enums'
 import { NoteItem, CategoryItem } from '@/types'
 
@@ -18,23 +23,23 @@ describe('Utilities', () => {
 
     test(`should only return the first line`, () => {
       const note = `Something
-      
+
       and something else`
       expect(getNoteTitle(note)).toEqual(`Something`)
     })
 
     test(`should not display a hash`, () => {
       const note = `# Something
-      
+
   and something else`
       expect(getNoteTitle(note)).toEqual(`Something`)
     })
 
     test(`should ignore newlines in the beginning`, () => {
       const note = `
-      
+
   Something
-      
+
   and something else`
       expect(getNoteTitle(note)).toEqual(`Something`)
     })
@@ -105,6 +110,13 @@ describe('Utilities', () => {
       const notes = [oneNote, otherNote]
 
       expect(getActiveNoteFromShortUuid(notes, shortActiveNoteId)).toEqual(undefined)
-    })
+    }),
+      test(`should remove italic from text`, () => {
+        expect(removeItalics('first *note*')).toBe('first note')
+        expect(removeItalics('*first* *note*')).toBe('first note')
+
+        expect(removeItalics('first **note**')).not.toBe('first note')
+        expect(removeItalics('first **note**')).not.toBe('first *note*')
+      })
   })
 })

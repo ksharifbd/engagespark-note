@@ -34,6 +34,7 @@ import {
   clickNoteOptions,
   clickNoteOptionCopyLinkedNoteMarkdown,
   clickSyncNotes,
+  clickNoteOptionDontPanic,
   typeNoteEditor,
   typeNoteSearch,
   clearNoteSearch,
@@ -195,6 +196,23 @@ describe('Manage notes test', () => {
 
     // assert favorites is empty
     assertNoteListLengthEquals(0)
+  })
+
+  it('should make texts to normal from italic in a note through context menu', () => {
+    const prefix = 'note 0'
+    const noteTitleItalic = 'italic *title*'
+    const noteTitleNormal = 'italic title'
+
+    typeNoteEditor(noteTitleItalic)
+
+    // before clicking the 'Don't panic' the title should have the italics
+    assertNoteEditorCharacterCount(`${prefix}${noteTitleItalic}`.length)
+
+    openNoteContextMenu()
+    clickNoteOptionDontPanic()
+
+    // after clicking the 'Don't panic' the title should not have the italics
+    assertNoteEditorCharacterCount(`${prefix}${noteTitleNormal}`.length)
   })
 
   it('should send a note to trash', () => {

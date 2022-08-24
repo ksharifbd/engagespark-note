@@ -23,6 +23,7 @@ import reducer, {
   loadNotes,
   loadNotesError,
   loadNotesSuccess,
+  makeItalicsToNormal,
 } from '@/slices/note'
 import { Folder } from '@/utils/enums'
 
@@ -815,5 +816,59 @@ describe('noteSlice', () => {
     const result = reducer(initialState, loadNotesSuccess({ notes: payload }))
 
     expect(result).toEqual(nextState)
+  })
+
+  describe('makeItalicsToNormal', () => {
+    test('should make the italics to normal in Notes', () => {
+      const activeNoteId = '2'
+      const notes = [
+        createNote({ id: '1', category: '3', text: 'This is the first note' }),
+        createNote({ id: '2', category: '3', text: 'This is the *second* *note*' }),
+      ]
+      const initialStateBeforeMakingItalicsToNormal = {
+        ...initialState,
+        notes: notes,
+      }
+      const nextState = {
+        ...initialStateBeforeMakingItalicsToNormal,
+        notes: [notes[0], { ...notes[1], text: 'This is the second note' }],
+      }
+      const result = reducer(
+        initialStateBeforeMakingItalicsToNormal,
+        makeItalicsToNormal({ activeNoteId })
+      )
+
+      expect(result).toEqual(nextState)
+    })
+
+    test('should make the italics to normal in Notes which are in selectedNotesIds', () => {
+      const activeNoteId = '2'
+      const notes = [
+        createNote({ id: '1', category: '3', text: 'This is the *first* note' }),
+        createNote({ id: '2', category: '3', text: 'This is the *second* *note*' }),
+      ]
+      const initialStateBeforeMakingItalicsToNormal = {
+        ...initialState,
+        notes,
+        selectedNotesIds: ['2', '1'],
+      }
+      const nextState = {
+        ...initialStateBeforeMakingItalicsToNormal,
+        notes: [
+          { ...notes[0], text: 'This is the first note' },
+          {
+            ...notes[1],
+            text: 'This is the second note',
+          },
+        ],
+        selectedNotesIds: ['2', '1'],
+      }
+      const result = reducer(
+        initialStateBeforeMakingItalicsToNormal,
+        makeItalicsToNormal({ activeNoteId })
+      )
+
+      expect(result).toEqual(nextState)
+    })
   })
 })
