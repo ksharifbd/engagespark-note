@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { ArrowUp, Download, Star, Trash, X, Edit2, Clipboard } from 'react-feather'
+import { ArrowUp, Download, Star, Trash, X, Edit2, Clipboard, Feather } from 'react-feather'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { LabelText } from '@resources/LabelText'
@@ -14,6 +14,7 @@ import {
   updateActiveNote,
   swapFolder,
   removeCategoryFromNotes,
+  makeItalicsToNormal,
 } from '@/slices/note'
 import { getCategories, getNotes } from '@/selectors'
 import { Folder, ContextMenuEnum } from '@/utils/enums'
@@ -121,6 +122,8 @@ const NotesOptions: React.FC<NotesOptionsProps> = ({ clickedNote }) => {
     dispatch(addCategoryToNote({ categoryId, noteId }))
   const _updateActiveNote = (noteId: string, multiSelect: boolean) =>
     dispatch(updateActiveNote({ noteId, multiSelect }))
+  const _makeItalicsToNormal = (activeNote: NoteItem) =>
+    dispatch(makeItalicsToNormal({ activeNoteId: activeNote.id }))
 
   // ===========================================================================
   // Handlers
@@ -143,6 +146,10 @@ const NotesOptions: React.FC<NotesOptionsProps> = ({ clickedNote }) => {
 
     const shortNoteUuid = getShortUuid(note.id)
     copyToClipboard(`{{${shortNoteUuid}}}`)
+  }
+
+  const doNotPanicHandler = () => {
+    _makeItalicsToNormal(clickedNote)
   }
 
   return !isDraftNote(clickedNote) ? (
@@ -206,6 +213,12 @@ const NotesOptions: React.FC<NotesOptionsProps> = ({ clickedNote }) => {
         handler={(e: React.SyntheticEvent) => copyLinkedNoteMarkdownHandler(e, clickedNote)}
         icon={Clipboard}
         text={LabelText.COPY_REFERENCE_TO_NOTE}
+      />
+      <ContextMenuOption
+        dataTestID={TestID.DO_NOT_PANIC}
+        handler={doNotPanicHandler}
+        icon={Feather}
+        text={LabelText.DO_NOT_PANIC}
       />
     </nav>
   ) : null

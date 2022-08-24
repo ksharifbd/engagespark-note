@@ -109,6 +109,10 @@ const clickNoteOptionFavorite = () => {
   clickTestID(TestID.NOTE_OPTION_FAVORITE)
 }
 
+const clickNoteOptionDontPanic = () => {
+  clickTestID(TestID.DO_NOT_PANIC)
+}
+
 const clickNoteOptionRestoreFromTrash = () => {
   clickTestID(TestID.NOTE_OPTION_RESTORE_FROM_TRASH)
 }
@@ -172,4 +176,5 @@ export {
   holdKeyAndClickNoteAtIndex,
   trashAllNotes,
   dragAndDrop,
+  clickNoteOptionDontPanic,
 }

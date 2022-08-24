@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { Folder, NotesSortKey } from '@/utils/enums'
 import { NoteItem, NoteState } from '@/types'
-import { isDraftNote } from '@/utils/helpers'
+import { isDraftNote, removeItalics } from '@/utils/helpers'
 import { getNotesSorter } from '@/utils/notesSortStrategies'
 
 const getNewActiveNoteId = (
@@ -321,6 +321,24 @@ const noteSlice = createSlice({
       ]
       state.loading = false
     },
+
+    makeItalicsToNormal: (
+      state,
+      { payload: { activeNoteId } }: PayloadAction<{ activeNoteId: string }>
+    ) => {
+      state.notes = state.notes.map((note) => {
+        if (state.selectedNotesIds.includes(activeNoteId)) {
+          return state.selectedNotesIds.includes(note.id)
+            ? { ...note, text: removeItalics(note.text) }
+            : note
+        }
+        if (note.id === activeNoteId) {
+          return { ...note, text: removeItalics(note.text) }
+        }
+
+        return note
+      })
+    },
   },
 })
 
@@ -347,6 +365,7 @@ export const {
   loadNotesError,
   loadNotesSuccess,
   importNotes,
+  makeItalicsToNormal,
 } = noteSlice.actions
 
 export default noteSlice.reducer
